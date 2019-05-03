@@ -1,6 +1,7 @@
 {
     "codename": "pp_pro",
-    "version": "3.0.0",
+    "extension_id": "193",
+	"version": "3.0.0",
     "name": "PayPal Pro",
     "description": "PayPal Pro",
 	"index": "extension/payment/pp_pro",
@@ -17,7 +18,7 @@
         "3.0.2.0",
 		"3.0.3.1"
     ],
-    "type": "payment",
+    "type": "module",
     "license": {
         "type": "commercial",
         "url": "https://shopunity.net/licenses/commercial"
@@ -44,7 +45,7 @@
 		"catalog/language/en-gb/extension/payment/pp_pro.php",
 		"catalog/view/theme/default/template/extension/payment/pp_pro.twig",
 		
-		"system/library/pp/jwt.php"
+		"system/library/pp_pro/jwt.php"
     ],
     "changelog": [
 		{

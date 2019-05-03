@@ -98,7 +98,7 @@ class ControllerExtensionPaymentPPPro extends Controller {
 			)
 		);
 						
-		require_once DIR_SYSTEM .'library/pp/jwt.php';
+		require_once DIR_SYSTEM .'library/pp_pro/jwt.php';
 		
 		$jwt = new JWT($this->config->get('payment_pp_pro_cardinal_api_key'));
 		
@@ -159,7 +159,7 @@ class ControllerExtensionPaymentPPPro extends Controller {
 		$this->load->language('extension/payment/pp_pro');
 										
 		if (isset($this->request->post['jwt'])) {
-			require_once DIR_SYSTEM .'library/pp/jwt.php';
+			require_once DIR_SYSTEM .'library/pp_pro/jwt.php';
 		
 			$jwt = new JWT($this->config->get('payment_pp_pro_cardinal_api_key'));
 					
