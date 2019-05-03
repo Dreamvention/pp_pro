@@ -9,7 +9,7 @@ $_['text_edit']          				= 'Edit PayPal Pro';
 $_['text_pp_pro']		 				= '<a target="_BLANK" href="https://www.paypal.com/uk/mrb/pal=V4T754QB63XXL"><img src="view/image/payment/paypal.png" alt="PayPal Website Payment Pro" title="PayPal Website Payment Pro iFrame" style="border: 1px solid #EEEEEE;" /></a>';
 $_['text_authorization'] 				= 'Authorization';
 $_['text_sale']			 				= 'Sale';
-$_['text_cardinal']						= 'Paypal Pro requires 3D Secure payment, please create a <a href="https://paypal3dsregistration.cardinalcommerce.com/UI/Registration.aspx" target="_blank">Cardinal account</a> to retrieve the API credentials.';
+$_['text_cardinal']						= 'Paypal Pro requires 3D Secure payment, please create a <a href="https://paypal3dsregistration.cardinalcommerce.com/UI/registrationcontactpage.aspx" target="_blank">Cardinal account</a> to retrieve the API credentials.';
 
 // Entry
 $_['entry_username']	 				= 'API Username';
