@@ -148,6 +148,12 @@ class ControllerExtensionPaymentPPPro extends Controller {
 			$data['payment_pp_pro_sort_order'] = $this->config->get('payment_pp_pro_sort_order');
 		}
 		
+		if (isset($this->request->post['payment_pp_pro_cardinal_status'])) {
+			$data['payment_pp_pro_cardinal_status'] = $this->request->post['payment_pp_pro_cardinal_status'];
+		} else {
+			$data['payment_pp_pro_cardinal_status'] = $this->config->get('payment_pp_pro_cardinal_status');
+		}
+		
 		if (isset($this->request->post['payment_pp_pro_cardinal_api_id'])) {
 			$data['payment_pp_pro_cardinal_api_id'] = $this->request->post['payment_pp_pro_cardinal_api_id'];
 		} else {
@@ -179,27 +185,35 @@ class ControllerExtensionPaymentPPPro extends Controller {
 		}
 
 		if (!$this->request->post['payment_pp_pro_username']) {
+			$this->error['warning'] = $this->language->get('error_warning');
 			$this->error['username'] = $this->language->get('error_username');
 		}
 
 		if (!$this->request->post['payment_pp_pro_password']) {
+			$this->error['warning'] = $this->language->get('error_warning');
 			$this->error['password'] = $this->language->get('error_password');
 		}
 
 		if (!$this->request->post['payment_pp_pro_signature']) {
+			$this->error['warning'] = $this->language->get('error_warning');
 			$this->error['signature'] = $this->language->get('error_signature');
 		}
 		
-		if (!$this->request->post['payment_pp_pro_cardinal_api_id']) {
-			$this->error['cardinal_api_id'] = $this->language->get('error_cardinal_api_id');
-		}
+		if ($this->request->post['payment_pp_pro_cardinal_status']) {
+			if (!$this->request->post['payment_pp_pro_cardinal_api_id']) {
+				$this->error['warning'] = $this->language->get('error_warning');
+				$this->error['cardinal_api_id'] = $this->language->get('error_cardinal_api_id');
+			}
 
-		if (!$this->request->post['payment_pp_pro_cardinal_api_key']) {
-			$this->error['cardinal_api_key'] = $this->language->get('error_cardinal_api_key');
-		}
+			if (!$this->request->post['payment_pp_pro_cardinal_api_key']) {
+				$this->error['warning'] = $this->language->get('error_warning');
+				$this->error['cardinal_api_key'] = $this->language->get('error_cardinal_api_key');
+			}
 
-		if (!$this->request->post['payment_pp_pro_cardinal_org_unit_id']) {
-			$this->error['cardinal_org_unit_id'] = $this->language->get('error_cardinal_org_unit_id');
+			if (!$this->request->post['payment_pp_pro_cardinal_org_unit_id']) {
+				$this->error['warning'] = $this->language->get('error_warning');
+				$this->error['cardinal_org_unit_id'] = $this->language->get('error_cardinal_org_unit_id');
+			}
 		}
 
 		return !$this->error;

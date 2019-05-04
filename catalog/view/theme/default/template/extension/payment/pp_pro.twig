@@ -150,8 +150,8 @@
 				<input type="text" name="cc_issue" value="" placeholder="{{ entry_cc_issue }}" id="input_cc_issue" class="form-control" />
 			</div>
 		</div>
-		<input type="hidden" name="jwt" id="jwt" value="{{ jwt }}" />
-		<div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+		{% if jwt %}<input type="hidden" name="jwt" id="jwt" value="{{ jwt }}" />{% endif %}
+		<div class="lds-spinner hidden"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 	</fieldset>
 	<div class="buttons">
 		<div class="pull-right">
@@ -161,6 +161,7 @@
 </form>
 <script type="text/javascript"><!--
 
+{% if jwt %}
 $('document').ready(function() {
 	showAlert({wait: true});
 		
@@ -177,10 +178,12 @@ $('document').ready(function() {
 		}
 	});
 });
+{% endif %}
 
 $('#form_pp_pro #button_confirm').bind('click', function() {					
 	showAlert({wait: true});
 		
+	{% if jwt %}
 	$.ajax({
 		url: 'index.php?route=extension/payment/pp_pro/cca',
 		type: 'post',
@@ -197,9 +200,27 @@ $('#form_pp_pro #button_confirm').bind('click', function() {
 			console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
 		}
 	});
-	
+	{% else %}
+	$.ajax({
+		url: 'index.php?route=extension/payment/pp_pro/send',
+		type: 'post',
+		data: $('#form_pp_pro :input'),
+		dataType: 'json',
+		success: function(json) {			
+			showAlert(json);
+														
+			if (json['success']) {
+				location = json['success'];
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+	{% endif %}
 });
 
+{% if jwt %}
 function setupCardinal() {
 	try {
 		// Make sure the Cardinal namespace is available before we set anything up
@@ -263,6 +284,7 @@ function executeCardinal(cca) {
 		console.error('Error while trying to start CCA', error);
 	}
 }
+{% endif %}
 
 function showAlert(json) {
 	$('#form_pp_pro .alert').remove();

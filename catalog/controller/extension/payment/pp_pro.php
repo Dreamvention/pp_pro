@@ -66,46 +66,46 @@ class ControllerExtensionPaymentPPPro extends Controller {
 			);
 		}
 		
-		$this->load->model('checkout/order');
+		if ($this->config->get('payment_pp_pro_cardinal_status')) {
+			$this->load->model('checkout/order');
 		
-		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+			$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 		
-		$amount = (int)((round($order_info['total'], 2)) * 100);
-		$currency_code = 0;
+			$amount = (int)((round($order_info['total'], 2)) * 100);
+			$currency_code = 0;
 		
-		$iso_currencies = $this->getISOCurrencies();
+			$iso_currencies = $this->getISOCurrencies();
 				
-		if (isset($iso_currencies[$order_info['currency_code']])) {
-			$currency_code = $iso_currencies[$order_info['currency_code']];
-		}
+			if (isset($iso_currencies[$order_info['currency_code']])) {
+				$currency_code = $iso_currencies[$order_info['currency_code']];
+			}
 		
-		$current_time = time();
-		$expire_time = 3600; // expiration in seconds - this equals 1hr
+			$current_time = time();
+			$expire_time = 3600; // expiration in seconds - this equals 1hr
 
-		$jwt_data = array();
+			$jwt_data = array();
 		
-		$jwt_data['jti'] = uniqid();
-		$jwt_data['iss'] = $this->config->get('payment_pp_pro_cardinal_api_id');  // API Key Identifier
-		$jwt_data['iat'] = $current_time; // JWT Issued At Time
-		$jwt_data['exp'] = $current_time + $expire_time; // JWT Expiration Time
-		$jwt_data['OrgUnitId'] = $this->config->get('payment_pp_pro_cardinal_org_unit_id'); // Merchant's OrgUnit
-		$jwt_data['ObjectifyPayload'] = true;
-		$jwt_data['Payload'] = array(
-			'OrderDetails' => array(
-				'OrderNumber' => $this->session->data['order_id'],
-				'Amount' => $amount,
-				'CurrencyCode' => $currency_code
-			)
-		);
+			$jwt_data['jti'] = uniqid();
+			$jwt_data['iss'] = $this->config->get('payment_pp_pro_cardinal_api_id');  // API Key Identifier
+			$jwt_data['iat'] = $current_time; // JWT Issued At Time
+			$jwt_data['exp'] = $current_time + $expire_time; // JWT Expiration Time
+			$jwt_data['OrgUnitId'] = $this->config->get('payment_pp_pro_cardinal_org_unit_id'); // Merchant's OrgUnit
+			$jwt_data['ObjectifyPayload'] = true;
+			$jwt_data['Payload'] = array(
+				'OrderDetails' => array(
+					'OrderNumber' => $this->session->data['order_id'],
+					'Amount' => $amount,
+					'CurrencyCode' => $currency_code
+				)
+			);
 						
-		require_once DIR_SYSTEM .'library/pp_pro/jwt.php';
+			require_once DIR_SYSTEM .'library/pp_pro/jwt.php';
 		
-		$jwt = new JWT($this->config->get('payment_pp_pro_cardinal_api_key'));
+			$jwt = new JWT($this->config->get('payment_pp_pro_cardinal_api_key'));
 		
-		$data['jwt'] = $jwt->encode($jwt_data);
-				
-		$data['order_id'] = $this->session->data['order_id'];
-		
+			$data['jwt'] = $jwt->encode($jwt_data);
+		}
+						
 		return $this->load->view('extension/payment/pp_pro', $data);
 	}
 	
@@ -152,6 +152,7 @@ class ControllerExtensionPaymentPPPro extends Controller {
 		
 		$data['error'] = $this->error;
 				
+		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($data));
 	}
 	
@@ -207,7 +208,16 @@ class ControllerExtensionPaymentPPPro extends Controller {
 		}
 		
 		if (!$this->error) {
-			$this->directPayment($jwt_data);		
+			$user_data['cc_number'] 							= $this->session->data['user_cc_number'];
+			$user_data['cc_start_date_month'] 					= $this->session->data['user_cc_start_date_month'];
+			$user_data['cc_start_date_year'] 					= $this->session->data['user_cc_start_date_year'];
+			$user_data['cc_expire_date_month'] 					= $this->session->data['user_cc_expire_date_month'];
+			$user_data['cc_expire_date_year'] 					= $this->session->data['user_cc_expire_date_year'];
+			$user_data['cc_type'] 								= $this->session->data['user_cc_type'];
+			$user_data['cc_issue'] 								= $this->session->data['user_cc_issue'];
+			$user_data['cc_cvv2'] 								= $this->session->data['user_cc_cvv2'];
+			
+			$this->directPayment($user_data, $jwt_data);		
 		}
 				
 		if (!$this->error) {
@@ -220,7 +230,7 @@ class ControllerExtensionPaymentPPPro extends Controller {
 		
 		$data['error'] = $this->error;
 		
-		// Clear user data
+		// Clear user's card data
 		unset($this->session->data['user_cc_number']);
 		unset($this->session->data['user_cc_start_date_month']);
 		unset($this->session->data['user_cc_start_date_year']);
@@ -233,8 +243,48 @@ class ControllerExtensionPaymentPPPro extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($data));
 	}
+	
+	public function send() {
+		$this->load->language('extension/payment/pp_pro');
+		
+		if (utf8_strlen($this->request->post['cc_number']) < 1) {
+			$this->error['warning'] = $this->language->get('error_warning');
+			$this->error['cc_number'] = $this->language->get('error_cc_number');
+		}
+		
+		if (utf8_strlen($this->request->post['cc_cvv2']) < 1) {
+			$this->error['warning'] = $this->language->get('error_warning');
+			$this->error['cc_cvv2'] = $this->language->get('error_cc_cvv2');
+		}
+		
+		if (!$this->error) {
+			$user_data['cc_number'] 							= $this->request->post['cc_number'];
+			$user_data['cc_start_date_month'] 					= $this->request->post['cc_start_date_month'];
+			$user_data['cc_start_date_year'] 					= $this->request->post['cc_start_date_year'];
+			$user_data['cc_expire_date_month'] 					= $this->request->post['cc_expire_date_month'];
+			$user_data['cc_expire_date_year'] 					= $this->request->post['cc_expire_date_year'];
+			$user_data['cc_type'] 								= $this->request->post['cc_type'];
+			$user_data['cc_issue'] 								= $this->request->post['cc_issue'];
+			$user_data['cc_cvv2'] 								= $this->request->post['cc_cvv2'];
+						
+			$this->directPayment($user_data);		
+		}
+				
+		if (!$this->error) {
+			$data['success'] = $this->url->link('checkout/success');
+		}
+		
+		if ($this->error) {
+			$data['confirm'] = true;
+		}
+		
+		$data['error'] = $this->error;
+				
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($data));
+	}
 			
-	private function directPayment($jwt_data) {
+	private function directPayment($user_data, $jwt_data = array()) {
 		$this->load->language('extension/payment/pp_pro');
 		
 		// DoDirectPayment
@@ -280,14 +330,14 @@ class ControllerExtensionPaymentPPPro extends Controller {
 		$request .= '&CUSTREF=' . (int)$order_info['order_id'];
 		$request .= '&PAYMENTACTION=' . $payment_type;
 		$request .= '&AMT=' . $this->currency->format($order_info['total'], $order_info['currency_code'], false, false);
-		$request .= '&CREDITCARDTYPE=' . $this->session->data['user_cc_type'];
-		$request .= '&ACCT=' . urlencode(str_replace(' ', '', $this->session->data['user_cc_number']));
-		$request .= '&CARDSTART=' . urlencode($this->session->data['user_cc_start_date_month'] . $this->session->data['user_cc_start_date_year']);
-		$request .= '&EXPDATE=' . urlencode($this->session->data['user_cc_expire_date_month'] . $this->session->data['user_cc_expire_date_year']);
-		$request .= '&CVV2=' . urlencode($this->session->data['user_cc_cvv2']);
+		$request .= '&CREDITCARDTYPE=' . $user_data['cc_type'];
+		$request .= '&ACCT=' . urlencode(str_replace(' ', '', $user_data['cc_number']));
+		$request .= '&CARDSTART=' . urlencode($user_data['cc_start_date_month'] . $user_data['cc_start_date_year']);
+		$request .= '&EXPDATE=' . urlencode($user_data['cc_expire_date_month'] . $user_data['cc_expire_date_year']);
+		$request .= '&CVV2=' . urlencode($user_data['cc_cvv2']);
 			
-		if ($this->session->data['user_cc_type'] == 'SWITCH' || $this->session->data['user_cc_type'] == 'SOLO') {
-			$request .= '&ISSUENUMBER=' . urlencode($this->session->data['user_cc_issue']);
+		if ($user_data['cc_type'] == 'SWITCH' || $user_data['cc_type'] == 'SOLO') {
+			$request .= '&ISSUENUMBER=' . urlencode($user_data['cc_issue']);
 		}
 
 		$request .= '&FIRSTNAME=' . urlencode($order_info['payment_firstname']);

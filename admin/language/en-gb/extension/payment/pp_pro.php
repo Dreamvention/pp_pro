@@ -22,6 +22,7 @@ $_['entry_order_status'] 				= 'Order Status';
 $_['entry_geo_zone']	 				= 'Geo Zone';
 $_['entry_status']		 				= 'Status';
 $_['entry_sort_order']	 				= 'Sort Order';
+$_['entry_cardinal_status']             = 'Cardinal Status:';
 $_['entry_cardinal_api_id']             = 'Cardinal API ID:';
 $_['entry_cardinal_api_key']            = 'Cardinal API Key:';
 $_['entry_cardinal_org_unit_id']    	= 'Cardinal Org Unit ID:';
@@ -32,6 +33,7 @@ $_['help_total']		 				= 'The checkout total the order must reach before this pa
 
 // Error
 $_['error_permission']	 				= 'Warning: You do not have permission to modify payment PayPal Website Payment Pro Checkout!';
+$_['error_warning']          			= 'Warning: Please check the form carefully for errors!';
 $_['error_username']	 				= 'API Username Required!';
 $_['error_password']	 				= 'API Password Required!';
 $_['error_signature']	 				= 'API Signature Required!';
