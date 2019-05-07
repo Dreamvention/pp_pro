@@ -109,6 +109,30 @@ class ControllerExtensionPaymentPPPro extends Controller {
 		} else {
 			$data['payment_pp_pro_transaction'] = $this->config->get('payment_pp_pro_transaction');
 		}
+		
+		if (isset($this->request->post['payment_pp_pro_cardinal_status'])) {
+			$data['payment_pp_pro_cardinal_status'] = $this->request->post['payment_pp_pro_cardinal_status'];
+		} else {
+			$data['payment_pp_pro_cardinal_status'] = $this->config->get('payment_pp_pro_cardinal_status');
+		}
+		
+		if (isset($this->request->post['payment_pp_pro_cardinal_api_id'])) {
+			$data['payment_pp_pro_cardinal_api_id'] = $this->request->post['payment_pp_pro_cardinal_api_id'];
+		} else {
+			$data['payment_pp_pro_cardinal_api_id'] = $this->config->get('payment_pp_pro_cardinal_api_id');
+		}
+			
+		if (isset($this->request->post['payment_pp_pro_cardinal_api_key'])) {
+			$data['payment_pp_pro_cardinal_api_key'] = $this->request->post['payment_pp_pro_cardinal_api_key'];
+		} else {
+			$data['payment_pp_pro_cardinal_api_key'] = $this->config->get('payment_pp_pro_cardinal_api_key');
+		}
+			
+		if (isset($this->request->post['payment_pp_pro_cardinal_org_unit_id'])) {
+			$data['payment_pp_pro_cardinal_org_unit_id'] = $this->request->post['payment_pp_pro_cardinal_org_unit_id'];
+		} else {
+			$data['payment_pp_pro_cardinal_org_unit_id'] = $this->config->get('payment_pp_pro_cardinal_org_unit_id');
+		}
 
 		if (isset($this->request->post['payment_pp_pro_total'])) {
 			$data['payment_pp_pro_total'] = $this->request->post['payment_pp_pro_total'];
@@ -148,30 +172,6 @@ class ControllerExtensionPaymentPPPro extends Controller {
 			$data['payment_pp_pro_sort_order'] = $this->config->get('payment_pp_pro_sort_order');
 		}
 		
-		if (isset($this->request->post['payment_pp_pro_cardinal_status'])) {
-			$data['payment_pp_pro_cardinal_status'] = $this->request->post['payment_pp_pro_cardinal_status'];
-		} else {
-			$data['payment_pp_pro_cardinal_status'] = $this->config->get('payment_pp_pro_cardinal_status');
-		}
-		
-		if (isset($this->request->post['payment_pp_pro_cardinal_api_id'])) {
-			$data['payment_pp_pro_cardinal_api_id'] = $this->request->post['payment_pp_pro_cardinal_api_id'];
-		} else {
-			$data['payment_pp_pro_cardinal_api_id'] = $this->config->get('payment_pp_pro_cardinal_api_id');
-		}
-			
-		if (isset($this->request->post['payment_pp_pro_cardinal_api_key'])) {
-			$data['payment_pp_pro_cardinal_api_key'] = $this->request->post['payment_pp_pro_cardinal_api_key'];
-		} else {
-			$data['payment_pp_pro_cardinal_api_key'] = $this->config->get('payment_pp_pro_cardinal_api_key');
-		}
-			
-		if (isset($this->request->post['payment_pp_pro_cardinal_org_unit_id'])) {
-			$data['payment_pp_pro_cardinal_org_unit_id'] = $this->request->post['payment_pp_pro_cardinal_org_unit_id'];
-		} else {
-			$data['payment_pp_pro_cardinal_org_unit_id'] = $this->config->get('payment_pp_pro_cardinal_org_unit_id');
-		}
-
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
