@@ -86,82 +86,82 @@
 }
 </style>
 <form id="form_pp_pro" class="form-horizontal">
-	<legend>{{ text_credit_card }}</legend>
+	<legend><?php echo $text_credit_card; ?></legend>
 	<fieldset class="fieldset-pp-pro">
 		<div class="form-group required">
-			<label class="col-sm-2 control-label" for="input_cc_type">{{ entry_cc_type }}</label>
+			<label class="col-sm-2 control-label" for="input_cc_type"><?php echo $entry_cc_type; ?></label>
 			<div class="col-sm-10">
 				<select name="cc_type" id="input_cc_type" class="form-control">
-				{% for card in cards %} 
-				<option value="{{ card['value'] }}">{{ card['text'] }}</option>
-				{% endfor %}
+					<?php foreach ($cards as $card) { ?>
+					<option value="<?php echo $card['value']; ?>"><?php echo $card['text']; ?></option>
+					<?php } ?>
 				</select>
 			</div>
 		</div>
 		<div class="form-group required">
-			<label class="col-sm-2 control-label" for="input_cc_number">{{ entry_cc_number }}</label>
+			<label class="col-sm-2 control-label" for="input_cc_number"><?php echo $entry_cc_number; ?></label>
 			<div class="col-sm-10">
-				<input type="text" name="cc_number" value="" placeholder="{{ entry_cc_number }}" id="input_cc_number" class="form-control" />
+				<input type="text" name="cc_number" value="" placeholder="<?php echo $entry_cc_number; ?>" id="input_cc_number" class="form-control" />
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label" for="input_cc_start_date"><span data-toggle="tooltip" title="{{ help_start_date }}">{{ entry_cc_start_date }}</span></label>
+			<label class="col-sm-2 control-label" for="input_cc_start_date"><span data-toggle="tooltip" title="<?php echo $help_start_date; ?>"><?php echo $entry_cc_start_date; ?></span></label>
 			<div class="col-sm-3">
 				<select name="cc_start_date_month" id="input_cc_start_date_month" class="form-control">
-					{% for month in months %}
-					<option value="{{ month['value'] }}">{{ month['text'] }}</option>
-					{% endfor %}       
+					<?php foreach ($months as $month) { ?>
+					<option value="<?php echo $month['value']; ?>"><?php echo $month['text']; ?></option>
+					<?php } ?>     
 				</select>
 			</div>
 			<div class="col-sm-3">
 				<select name="cc_start_date_year" id="input_cc_start_date_year" class="form-control">
-					{% for year in year_valid %}
-					<option value="{{ year['value'] }}">{{ year['text'] }}</option>
-					{% endfor %}
+					<?php foreach ($year_valid as $year) { ?>
+					<option value="<?php echo $year['value']; ?>"><?php echo $year['text']; ?></option>
+					<?php } ?>
 				</select>
 			</div>
 		</div>
 		<div class="form-group required">
-			<label class="col-sm-2 control-label" for="input_cc_expire_date">{{ entry_cc_expire_date }}</label>
+			<label class="col-sm-2 control-label" for="input_cc_expire_date"><?php echo $entry_cc_expire_date; ?></label>
 			<div class="col-sm-3">
 				<select name="cc_expire_date_month" id="input_cc_expire_date_month" class="form-control">
-					{% for month in months %}
-					<option value="{{ month['value'] }}">{{ month['text'] }}</option>
-					{% endfor %}
+					<?php foreach ($months as $month) { ?>
+					<option value="<?php echo $month['value']; ?>"><?php echo $month['text']; ?></option>
+					<?php } ?>
 				</select>
 			</div>
 			<div class="col-sm-3">
 				<select name="cc_expire_date_year" id="input_cc_expire_date_year" class="form-control">
-					{% for year in year_expire %}
-					<option value="{{ year['value'] }}">{{ year['text'] }}</option>
-					{% endfor %}
+					<?php foreach ($year_expire as $year) { ?>
+					<option value="<?php echo $year['value']; ?>"><?php echo $year['text']; ?></option>
+					<?php } ?>
 				</select>
 			</div>
 		</div>
 		<div class="form-group required">
-			<label class="col-sm-2 control-label" for="input_cc_cvv2">{{ entry_cc_cvv2 }}</label>
+			<label class="col-sm-2 control-label" for="input_cc_cvv2"><?php echo $entry_cc_cvv2; ?></label>
 			<div class="col-sm-10">
-				<input type="text" name="cc_cvv2" value="" placeholder="{{ entry_cc_cvv2 }}" id="input_cc_cvv2" class="form-control" />
+				<input type="text" name="cc_cvv2" value="" placeholder="<?php echo $entry_cc_cvv2; ?>" id="input_cc_cvv2" class="form-control" />
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label" for="input_cc_issue"><span data-toggle="tooltip" title="{{ help_issue }}">{{ entry_cc_issue }}</span></label>
+			<label class="col-sm-2 control-label" for="input_cc_issue"><span data-toggle="tooltip" title="<?php echo $help_issue; ?>"><?php echo $entry_cc_issue; ?></span></label>
 			<div class="col-sm-10">
-				<input type="text" name="cc_issue" value="" placeholder="{{ entry_cc_issue }}" id="input_cc_issue" class="form-control" />
+				<input type="text" name="cc_issue" value="" placeholder="<?php echo $entry_cc_issue; ?>" id="input_cc_issue" class="form-control" />
 			</div>
 		</div>
-		{% if jwt %}<input type="hidden" name="jwt" id="jwt" value="{{ jwt }}" />{% endif %}
+		<?php if ($jwt) { ?><input type="hidden" name="jwt" id="jwt" value="<?php echo $jwt; ?>" /><?php } ?>
 		<div class="lds-spinner hidden"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 	</fieldset>
 	<div class="buttons">
 		<div class="pull-right">
-			<input type="button" value="{{ button_confirm }}" id="button_confirm" data-loading-text="{{ text_loading }}" class="btn btn-primary" />
+			<input type="button" value="<?php echo $button_confirm; ?>" id="button_confirm" data-loading-text="<?php echo $text_loading; ?>" class="btn btn-primary" />
 		</div>
 	</div>
 </form>
 <script type="text/javascript">
 
-{% if jwt %}
+<?php if ($jwt) { ?>
 $('document').ready(function() {
 	showAlert({wait: true});
 		
@@ -178,12 +178,12 @@ $('document').ready(function() {
 		}
 	});
 });
-{% endif %}
+<?php } ?>
 
 $('#form_pp_pro #button_confirm').bind('click', function() {					
 	showAlert({wait: true});
 		
-	{% if jwt %}
+	<?php if ($jwt) { ?>
 	$.ajax({
 		url: 'index.php?route=extension/payment/pp_pro/cca',
 		type: 'post',
@@ -200,7 +200,7 @@ $('#form_pp_pro #button_confirm').bind('click', function() {
 			console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
 		}
 	});
-	{% else %}
+	<?php } else { ?>
 	$.ajax({
 		url: 'index.php?route=extension/payment/pp_pro/send',
 		type: 'post',
@@ -217,10 +217,10 @@ $('#form_pp_pro #button_confirm').bind('click', function() {
 			console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
 		}
 	});
-	{% endif %}
+	<?php } ?>
 });
 
-{% if jwt %}
+<?php if ($jwt) { ?>
 function setupCardinal() {
 	try {
 		// Make sure the Cardinal namespace is available before we set anything up
@@ -284,7 +284,7 @@ function executeCardinal(cca) {
 		console.error('Error while trying to start CCA', error);
 	}
 }
-{% endif %}
+<?php } ?>
 
 function showAlert(json) {
 	$('#form_pp_pro .alert').remove();
@@ -293,7 +293,7 @@ function showAlert(json) {
 	$('#form_pp_pro #button_confirm').attr('disabled', true);
 	
 	if (json['wait']) {
-		$('#form_pp_pro').prepend('<div class="alert alert-info"><i class="fa fa-exclamation-circle"></i><button type="button" class="close" data-dismiss="alert">&times;</button> {{ text_wait }}</div>');
+		$('#form_pp_pro').prepend('<div class="alert alert-info"><i class="fa fa-exclamation-circle"></i><button type="button" class="close" data-dismiss="alert">&times;</button> <?php echo $text_wait; ?></div>');
 		
 		$('#form_pp_pro .lds-spinner').removeClass('hidden');
 	}

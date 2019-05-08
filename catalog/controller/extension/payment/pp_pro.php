@@ -5,6 +5,23 @@ class ControllerExtensionPaymentPPPro extends Controller {
 	public function index() {
 		$this->load->language('extension/payment/pp_pro');
 
+		$data['text_credit_card'] = $this->language->get('text_credit_card');
+		$data['text_start_date'] = $this->language->get('text_start_date');
+		$data['text_wait'] = $this->language->get('text_wait');
+		$data['text_loading'] = $this->language->get('text_loading');
+
+		$data['entry_cc_type'] = $this->language->get('entry_cc_type');
+		$data['entry_cc_number'] = $this->language->get('entry_cc_number');
+		$data['entry_cc_start_date'] = $this->language->get('entry_cc_start_date');
+		$data['entry_cc_expire_date'] = $this->language->get('entry_cc_expire_date');
+		$data['entry_cc_cvv2'] = $this->language->get('entry_cc_cvv2');
+		$data['entry_cc_issue'] = $this->language->get('entry_cc_issue');
+
+		$data['help_start_date'] = $this->language->get('help_start_date');
+		$data['help_issue'] = $this->language->get('help_issue');
+
+		$data['button_confirm'] = $this->language->get('button_confirm');
+
 		$data['cards'] = array();
 
 		$data['cards'][] = array(
@@ -66,7 +83,7 @@ class ControllerExtensionPaymentPPPro extends Controller {
 			);
 		}
 		
-		if ($this->config->get('payment_pp_pro_cardinal_status')) {
+		if ($this->config->get('pp_pro_cardinal_status')) {
 			$this->load->model('checkout/order');
 		
 			$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
@@ -86,10 +103,10 @@ class ControllerExtensionPaymentPPPro extends Controller {
 			$jwt_data = array();
 		
 			$jwt_data['jti'] = uniqid();
-			$jwt_data['iss'] = $this->config->get('payment_pp_pro_cardinal_api_id');  // API Key Identifier
+			$jwt_data['iss'] = $this->config->get('pp_pro_cardinal_api_id');  // API Key Identifier
 			$jwt_data['iat'] = $current_time; // JWT Issued At Time
 			$jwt_data['exp'] = $current_time + $expire_time; // JWT Expiration Time
-			$jwt_data['OrgUnitId'] = $this->config->get('payment_pp_pro_cardinal_org_unit_id'); // Merchant's OrgUnit
+			$jwt_data['OrgUnitId'] = $this->config->get('pp_pro_cardinal_org_unit_id'); // Merchant's OrgUnit
 			$jwt_data['ObjectifyPayload'] = true;
 			$jwt_data['Payload'] = array(
 				'OrderDetails' => array(
@@ -101,14 +118,14 @@ class ControllerExtensionPaymentPPPro extends Controller {
 						
 			require_once DIR_SYSTEM .'library/pp_pro/jwt.php';
 		
-			$jwt = new JWT($this->config->get('payment_pp_pro_cardinal_api_key'));
+			$jwt = new JWT($this->config->get('pp_pro_cardinal_api_key'));
 		
 			$data['jwt'] = $jwt->encode($jwt_data);
 		}
-						
+
 		return $this->load->view('extension/payment/pp_pro', $data);
 	}
-	
+
 	public function cca() {
 		$this->load->language('extension/payment/pp_pro');
 		
@@ -162,7 +179,7 @@ class ControllerExtensionPaymentPPPro extends Controller {
 		if (isset($this->request->post['jwt'])) {
 			require_once DIR_SYSTEM .'library/pp_pro/jwt.php';
 		
-			$jwt = new JWT($this->config->get('payment_pp_pro_cardinal_api_key'));
+			$jwt = new JWT($this->config->get('pp_pro_cardinal_api_key'));
 					
 			$jwt_data = json_decode(json_encode($jwt->decode($this->request->post['jwt'])), true);
 			
@@ -283,12 +300,12 @@ class ControllerExtensionPaymentPPPro extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($data));
 	}
-			
+
 	private function directPayment($user_data, $jwt_data = array()) {
 		$this->load->language('extension/payment/pp_pro');
 		
 		// DoDirectPayment
-		if (!$this->config->get('payment_pp_pro_transaction')) {
+		if (!$this->config->get('pp_pro_transaction')) {
 			$payment_type = 'Authorization';
 		} else {
 			$payment_type = 'Sale';
@@ -324,9 +341,9 @@ class ControllerExtensionPaymentPPPro extends Controller {
 			$request .= '&XID=' . $jwt_data['Payload']['Payment']['ExtendedData']['XID'];
 		}
 		
-		$request .= '&USER=' . urlencode($this->config->get('payment_pp_pro_username'));
-		$request .= '&PWD=' . urlencode($this->config->get('payment_pp_pro_password'));
-		$request .= '&SIGNATURE=' . urlencode($this->config->get('payment_pp_pro_signature'));
+		$request .= '&USER=' . urlencode($this->config->get('pp_pro_username'));
+		$request .= '&PWD=' . urlencode($this->config->get('pp_pro_password'));
+		$request .= '&SIGNATURE=' . urlencode($this->config->get('pp_pro_signature'));
 		$request .= '&CUSTREF=' . (int)$order_info['order_id'];
 		$request .= '&PAYMENTACTION=' . $payment_type;
 		$request .= '&AMT=' . $this->currency->format($order_info['total'], $order_info['currency_code'], false, false);
@@ -369,7 +386,7 @@ class ControllerExtensionPaymentPPPro extends Controller {
 			$request .= '&SHIPTOZIP=' . urlencode($order_info['payment_postcode']);
 		}
 								
-		if (!$this->config->get('payment_pp_pro_test')) {
+		if (!$this->config->get('pp_pro_test')) {
 			$curl = curl_init('https://api-3t.paypal.com/nvp');
 		} else {
 			$curl = curl_init('https://api-3t.sandbox.paypal.com/nvp');
@@ -413,7 +430,7 @@ class ControllerExtensionPaymentPPPro extends Controller {
 				$message .= 'TRANSACTIONID: ' . $response_info['TRANSACTIONID'] . "\n";
 			}
 
-			$this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('payment_pp_pro_order_status_id'), $message, false);
+			$this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('pp_pro_order_status_id'), $message, false);
 					
 			$this->log->write('DoDirectPayment success for order ' . $this->session->data['order_id'] . ': '. print_r($response_info, true));
 		} else {
@@ -422,7 +439,7 @@ class ControllerExtensionPaymentPPPro extends Controller {
 			$this->error['warning'] = $response_info['L_LONGMESSAGE0'];
 		}
 	}
-		
+	
 	private function getISOCurrencies() {
 		return array(
 			'AED' => '784', 'AFN' => '971',
