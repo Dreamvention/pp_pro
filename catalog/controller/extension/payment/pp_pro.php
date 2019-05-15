@@ -66,7 +66,15 @@ class ControllerExtensionPaymentPPPro extends Controller {
 			);
 		}
 		
+		$data['jwt'] = '';
+		
 		if ($this->config->get('payment_pp_pro_cardinal_status')) {
+			if (!$this->config->get('payment_pp_pro_test')) {
+				$data['cardinal_url'] = 'https://songbird.cardinalcommerce.com/edge/v1/songbird.js';
+			} else {
+				$data['cardinal_url'] = 'https://songbirdstag.cardinalcommerce.com/edge/v1/songbird.js';
+			}
+			
 			$this->load->model('checkout/order');
 		
 			$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
