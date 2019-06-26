@@ -159,7 +159,8 @@ class ControllerPaymentPPPro extends Controller {
 					'Account' => array(
 						'AccountNumber' => $this->request->post['cc_number'],
 						'ExpirationMonth' => $this->request->post['cc_expire_date_month'],
-						'ExpirationYear' => $this->request->post['cc_expire_date_year']
+						'ExpirationYear' => $this->request->post['cc_expire_date_year'],
+						'CardCode' => $this->request->post['cc_cvv2']
 					)
 				)
 			);
