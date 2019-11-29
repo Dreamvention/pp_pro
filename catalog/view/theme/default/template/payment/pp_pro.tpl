@@ -170,6 +170,7 @@ $('document').ready(function() {
 		type: 'post',
 		data: '',
 		dataType: 'script',
+		async: false,
 		success: function() {
 			setupCardinal();
 		},
@@ -189,6 +190,7 @@ $('#form_pp_pro #button_confirm').bind('click', function() {
 		type: 'post',
 		data: $('#form_pp_pro :input'),
 		dataType: 'json',
+		async: false,
 		success: function(json) {			
 			showAlert(json);
 						
@@ -206,6 +208,7 @@ $('#form_pp_pro #button_confirm').bind('click', function() {
 		type: 'post',
 		data: $('#form_pp_pro :input'),
 		dataType: 'json',
+		async: false,
 		success: function(json) {			
 			showAlert(json);
 														
@@ -252,6 +255,7 @@ function setupCardinal() {
 						url: 'index.php?route=payment/pp_pro/jwt',
 						data: {'data': JSON.stringify(data), 'jwt': jwt},
 						dataType: 'json',
+						async: false,
 						success: function(json) {
 							showAlert(json);
 														
